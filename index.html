@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Somali Quiz Game - By Jamaal Ahmed Abdikariin</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #e6f2ff, #ffffff);
+      color: #333;
+      text-align: center;
+      padding: 30px 15px;
+      margin: 0;
+    }
+    h1 {
+      color: #004080;
+    }
+    .question {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .choice {
+      display: block;
+      margin: 8px auto;
+      padding: 12px 18px;
+      width: 90%;
+      max-width: 300px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .choice:hover {
+      background-color: #0056b3;
+    }
+    .correct {
+      background-color: #28a745 !important;
+    }
+    .wrong {
+      background-color: #dc3545 !important;
+    }
+    #result {
+      font-size: 16px;
+      margin-top: 15px;
+    }
+    #score {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #shareBtn {
+      display: none;
+      margin-top: 20px;
+      background: #4267B2;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    #footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #777;
+    }
+    #nameInput {
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 90%;
+      max-width: 300px;
+    }
+    #startBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    img {
+      max-width: 200px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ka jawaab sua,aalaha</h1>
+
+  <div id="nameInput">
+    <input type="text" id="username" placeholder="Geli Magacaaga">
+    <button id="startBtn" onclick="startQuiz()">Bilow sualaha</button>
+  </div>
+
+  <div class="question" id="question" style="display:none">Su'aal ayaa halkan ka muuqan doonta</div>
+  <div id="image"></div>
+  <div id="choices"></div>
+  <p id="result"></p>
+  <p id="score" style="display:none">Dhibcaha: 0</p>
+
+  <a id="shareBtn" href="#" target="_blank">
+    ➤ Share Challenge-ka Facebook!
+  </a>
+
+  <div id="footer">
+    Waxaa diyaariyay: <strong>Jamaal Ahmed Abdikariin</strong>
+  </div>
+
+  <script>
+    const quizData = [
+  { question: "Run mise Been: Soomaaliya waa waddanka ugu xeebta dheer Afrika?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa tee caasimadda Galmudug?", choices: ["Cadaado", "Galkacyo", "Dhuusamareeb", "Cabudwaaq"], correct: 2 },
+  { question: "Waa kuma madaxweynaha sawirkiisa ku muuqda?", image: "images/abdirashiid ali.JPG", choices: ["Aden Cadde", "Cabdiqaasim", "Sharmaarke", "Farmaajo"], correct: 2 },
+  { question: "Run mise Been: Soomaaliya waxay leedahay 5 mamul goboleed?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa kuma madaxwayne hore oo ku jira sawirkan?", image: "images/abdi qasim salaad xasan.JPG", choices: ["Shariif Sheikh", "Cabdiqaasim", "Cali Geeddi", "Aden Cadde"], correct: 1 },
+  { question: "Waa kuma abwaanka ku muuqda sawirka?", image: "images/Abwaan-Hadraawi.JPG", choices: ["Timacadde", "Gaarriye", "Hadraawi", "Yamyam"], correct: 2 },
+  { question: "Waa kuma ra'iisul wasaarihii hore ee sawirkan ku jira?", image: "images/cumar carte qalib.JPG", choices: ["Cumar Carte", "Cabdiqaasim", "Farmaajo", "Ridwaan Xirsi"], correct: 0 },
+  { question: "Madaxweyne kee ayaa sawirkan ku jira?", image: "images/siyad.JPEG", choices: ["Cabdiqaasim", "Sharmaarke", "Siyaad Barre", "Aden Cadde"], correct: 2 },
+  { question: "Waa kuma abwaanka muuqda sawirka?", image: "images/yamyam.JPG", choices: ["Yamyam", "Hadraawi", "Gaarriye", "Timacadde"], correct: 0 },
+  { question: "Waa kuma madaxwaynahan hore ee Soomaaliya?", image: "images/aden-cadde.JPG", choices: ["Sharmaarke", "Aden Cadde", "Cabdiqaasim", "Farmaajo"], correct: 1 },
+  { question: "Run mise Been: Muqdisho waa caasimadda ugu weyn ee Bariga Afrika?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa kee gobolka ay ku taallo magaalada Beledweyne?", choices: ["Hiiraan", "Bakool", "Bay", "Gedo"], correct: 0 },
+  { question: "Run mise Been: Soomaaliya waxay xuduud la leedahay afar waddan?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa tee caasimadda gobolka Mudug?", choices: ["Gaalkacyo", "Hobyo", "Galdogob", "Jariban"], correct: 0 },
+  { question: "Run mise Been: Wabiga Jubba wuxuu ka yimaadaa Itoobiya?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa kuma Madaxweynaha Soomaaliya ee hadda talada haya (2025)?", choices: ["Farmaajo", "Hassan Sheikh", "Shariif Sheekh", "Cali Mahdi"], correct: 1 },
+  { question: "Intan magaalo midkee ah magaalo dekeded muhiim u ah Soomaaliya?", choices: ["Baraawe", "Xudur", "Galdogob", "Kismaayo"], correct: 3 },
+  { question: "Run mise Been: Gobolka Bari wuxuu ku yaal koonfurta Soomaaliya?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa tee caasimadda Gobolka Awdal?", choices: ["Borama", "Baki", "Dila", "Saylac"], correct: 0 },
+  { question: "Run mise Been: Gobolka Nugaal wuxuu ku yaal waqooyiga Soomaaliya?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa tee caasimadda maamulka Koonfur Galbeed?", choices: ["Baydhabo", "Baraawe", "Xudur", "Diinsoor"], correct: 0 },
+  { question: "Demade ah degmo ka tirsan Gobolka Gedo?", choices: ["Baardheere", "Beledweyne", "Ceerigaabo", "Berbera"], correct: 0 },
+  { question: "Run mise Been: Af-Soomaaliga waxa la qoray 1972?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa tee caasimadda maamulka Jubbaland?", choices: ["Kismaayo", "Doolow", "Luuq", "Bu’aale"], correct: 0 },
+  { question: "Run mise Been: Gobolka Gedo wuxuu ka tirsan yahay Jubbaland?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa tee caasimadda deegaanka Soomaalida Itoobiya?", choices: ["Jigjiga", "Godey", "Dollo", "Wardheer"], correct: 0 },
+  { question: "Waa maxay magaca rasmiga ah ee deegaanka Soomaalida Itoobiya?", choices: ["DDS", "Somali Zone", "SRS", "DDSI"], correct: 3 },
+  { question: "Waa kee webiga dhaafa magaalada Godey?", choices: ["Shabeelle", "Jubba", "Dheere", "Genaale"], correct: 0 },
+  { question: "Run mise Been: Magaalada Qabridahare waxay ka tirsan tahay DDSI?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Degmo intee le’eg ayey leedahay DDSI?", choices: ["20", "65", "50", "72"], correct: 2 },
+  { question: "Waa tee degmada ugu weyn deegaanka Soomaalida Itoobiya?", choices: ["Godey", "Jigjiga", "Wardheer", "Dollo"], correct: 1 },
+  { question: "Run mise Been: DDSI waa mid kamid ah 11ka deegaanka ee Itoobiya?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Qoomiyadda ugu badan deegaanka Soomaalida Itoobiya waa?", choices: ["Oromo", "Somali", "Afar", "Amxaaro"], correct: 1 },
+  { question: "Waa tee degmadii uu ka dhashay Cabdimajiid Hussein?", choices: ["Shilaabo", "Qabridahare", "Fiiq", "Jigjiga"], correct: 2 },
+  { question: "Run mise Been: Qoraxay waa magaalo ka tirsan gobolka Jigjiga?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa maxay NFD macnaheedu?", choices: ["Northern Federal District", "Northern Frontier District", "National Frontier Division", "North Free Division"], correct: 1 },
+  { question: "Waa tee caasimadda gobolka Waqooyi Bari Kenya (NFD)?", choices: ["Wajir", "Mandhera", "Garissa", "Isiolo"], correct: 2 },
+  { question: "Run mise Been: Dadka NFD badankoodu waa Soomaali?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa tee degmooyinkii ugu waaweynaa ee NFD markii hore?", choices: ["Garissa, Mandhera, Wajir", "Moyale, Isiolo, Marsabit", "Lamu, Malindi, Kilifi", "Wajir, Garsen, Hola"], correct: 0 },
+  { question: "Run mise Been: Dagaalkii 'Shifta' wuxuu ka dhacay NFD?", choices: ["Run", "Been"], correct: 0 },
+  { question: "NFD waxaa gumaysan jiray oo gumaystihii u dhiibay Kenya?", choices: ["Talyaaniga", "Britain", "Faransiiska", "Itoobiya"], correct: 1 },
+  { question: "Waa tee gobolka NFD ee ugu xuduud dhow Soomaaliya?", choices: ["Wajir", "Mandhera", "Isiolo", "Garissa"], correct: 1 },
+  { question: "Waa maxay sababta ay Soomaalida u diideen NFD inay Kenya hoos tagto?", choices: ["Biyo la'aan", "Xoolo la'aan", "Xuduud la'aan", "Rabitaan midnimo Soomaaliyeed"], correct: 3 },
+  { question: "Waa tee gobolka NFD ee caan ku ah xoolaha geela?", choices: ["Wajir", "Garissa", "Mandhera", "Dhammaan kor ku xusan"], correct: 3 },
+  { question: "Run mise Been: Qoomiyado kale oo aan Soomaali ahayn kuma nool NFD?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa kee gobolka ay ku taallo magaalada Garowe?", choices: ["Bari", "Mudug", "Nugaal", "Sanaag"], correct: 2 },
+  { question: "Waa tee magaalada madaxda maamulka Hirshabelle?", choices: ["Beledweyne", "Jowhar", "Mahaday", "Cadale"], correct: 1 },
+  { question: "Run mise Been: Magaalada Hargeysa waa caasimadda gobolka saxil?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa tee magaalada ugu weyn gobolka Bay?", choices: ["Xudur", "Baidoa", "Baraawe", "Qansax Dheere"], correct: 1 },
+  { question: "Run mise Been: Soomaaliya waxay leedahay xuduud badeed oo dheer?", choices: ["Run", "Been"], correct: 0 },
+  { question: "Waa tee magaca caasimadda gobolka Sanaag?", choices: ["Laascaanood", "Cerigabo", "Badhan", "Ceerigaabo"], correct: 3 },
+  { question: "Waa tee gobolka ay ku taallo magaalada Marka?", choices: ["Shabeellaha Dhexe", "Bakool", "Shabeellaha Hoose", "Hiiraan"], correct: 2 },
+  { question: "Waa tee magaada casimada u ah maamulka Koonfur Galbeed?", choices: ["Baydhabo", "Baraawe", "Xudur", "Buurhakaba"], correct: 0 },
+  { question: "Run mise Been: Gobolka karkaar wuxuu ka mid yahay gobolada Puntland?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa tee magaalada ugu weyn gobolka Togdheer?", choices: ["Burco", "Berbera", "Buuhoodle", "Ceel Afweyn"], correct: 0 },
+  { question: "Waa kuma madaxwaynihii ugu horreeyay Soomaaliya?", choices: ["Aden Cadde", "Sharmaarke", "Siyaad Barre", "Cabdiqaasim"], correct: 0 },
+  { question: "Waa tee magaalada caasimadda gobolka Bakool?", choices: ["Tayeeglow", "Rab Dhuure", "Xudur", "Ceelbarde"], correct: 2 },
+  { question: "Run mise Been: Soomaaliya waxay xornimada ka qaadatay Ingiriiska 1960?", choices: ["Run", "Been"], correct: 1 },
+  { question: "Waa tee magaalada madaxda u ah gobolka Bari?", choices: ["Boosaaso", "Qardho", "Bargaal", "Iskushuban"], correct: 0 },
+  { question: "Run mise Been: Soomaaliya waxay leedahay laba xildhibaan goleyaal ah?", choices: ["Run", "Been"], correct: 0 },
+];
+
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function startQuiz() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) {
+        alert("Fadlan geli magacaaga si aad u bilowdo.");
+        return;
+      }
+      document.getElementById("nameInput").style.display = "none";
+      document.getElementById("question").style.display = "block";
+      document.getElementById("score").style.display = "block";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      document.getElementById("result").textContent = "";
+      const q = quizData[currentQuestion];
+      document.getElementById("question").textContent = q.question;
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+
+      const imageDiv = document.getElementById("image");
+      imageDiv.innerHTML = q.image ? `<img src="${q.image}" alt="image">` : "";
+
+      q.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        button.classList.add("choice");
+        button.textContent = choice;
+        button.onclick = () => checkAnswer(index, button);
+        choicesDiv.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selected, btn) {
+      const q = quizData[currentQuestion];
+      const result = document.getElementById("result");
+      const buttons = document.querySelectorAll(".choice");
+
+      buttons.forEach((b, i) => {
+        if (i === q.correct) b.classList.add("correct");
+        else b.classList.add("wrong");
+        b.disabled = true;
+      });
+
+      if (selected === q.correct) {
+        result.textContent = "Waa sax!";
+        score++;
+      } else {
+        result.textContent = `Khalad! Jawaabta saxda ah waa: ${q.choices[q.correct]}`;
+      }
+
+      document.getElementById("score").textContent = `Dhibcaha: ${score}`;
+
+      currentQuestion++;
+      setTimeout(() => {
+        if (currentQuestion < quizData.length) {
+          showQuestion();
+        } else {
+          document.getElementById("question").textContent = "dhamaad mahad sanid!";
+          document.getElementById("image").innerHTML = "";
+          document.getElementById("choices").innerHTML = "";
+          result.textContent = `Dhibcahaaga ugu dambeeya: ${score}/${quizData.length}`;
+
+          const fbShare = document.getElementById("shareBtn");
+          const shareText = encodeURIComponent(`Waxaan helay ${score}/${quizData.length} ee Somali Quiz Game! Isku day adigana:`);
+          const shareUrl = encodeURIComponent(window.location.href);
+          fbShare.href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`;
+          fbShare.style.display = "inline-block";
+        }
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
